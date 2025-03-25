@@ -1,0 +1,27 @@
+
+[env]
+    # need insiders for `agent` abilities
+    COPILOT_IDE = "code-insiders"
+
+[tasks."version:cursor"]
+    run = "cursor --version"
+
+[tasks."version:windsurf"]
+    run = "windsurf --version"
+
+[tasks."version:copilot"]
+    # versus ~/.vscode
+    env = { COPILOT_DIR = ".vscode-insiders" }
+    run = "jq -r '.version' $(find ~/$COPILOT_DIR/extensions -type d -name 'github.copilot-[0-9]*')/package.json"
+
+[tasks."ide:cursor"]
+    run = "cursor {{arg(name='file')}}"
+
+[tasks."ide:windsurf"]
+    run = "windsurf {{arg(name='file')}}"
+
+[tasks."ide:copilot"]
+    run = "windsurf {{arg(name='file')}}"
+
+[tasks.eval]
+    run = "uv run ai-ide-compare {{arg(name='taskdir')}}"

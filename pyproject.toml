@@ -1,0 +1,11 @@
+[project]
+    name            = "ai-ide-compare"
+    version         = "0.0.1"
+    description     = "Evaluate AI IDEs in standardized way"
+    readme          = "readme.md"
+    authors         = [{ name = "graham", email = "graham.annett@gmail.com" }]
+    requires-python = ">=3.12"
+    dependencies    = []
+
+    [project.scripts]
+        ai-ide-compare = "ai_ide_compare:main"

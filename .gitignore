@@ -1,0 +1,21 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# ignore
+tasks/brownfield/*
+
+tasks/greenfield/*
+tasks/greenfield/*/*
+!tasks/greenfield/*/
+!tasks/greenfield/*/.mise.*.toml
+
+# use .keep for blank dirs but ignore the actual implementation
+!**/.keep

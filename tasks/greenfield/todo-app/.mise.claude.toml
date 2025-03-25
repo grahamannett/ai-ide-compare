@@ -1,0 +1,62 @@
+[env]
+   AI_IDE_PROMPT = """
+## Project Overview
+Create a full-stack todo application that allows users to manage their tasks efficiently.
+The application should provide a clean, intuitive interface for creating, updating, and tracking todo items.
+
+## Core Features
+1. **Task Management**
+   - Create new todo items
+   - Edit existing todo items
+   - Mark todo items as complete/incomplete
+   - Delete todo items
+   - Categorize todo items (optional)
+
+2. **User Experience**
+   - Responsive design that works on desktop and mobile
+   - Clean, minimalist user interface
+   - Intuitive task management interactions
+   - Visual indication of task status (completed/pending)
+
+3. **Data Persistence**
+   - Persist todo items between sessions
+   - Support for local storage or backend database
+
+## Specific Implementation Guidelines
+- Implement error handling for all user interactions
+- Ensure input validation for todo item creation
+- Provide clear feedback for user actions
+- Optimize for performance and responsiveness
+
+## User Interface Considerations
+- Minimal and clean design
+- Consistent color scheme
+- Accessibility considerations
+- Smooth, intuitive interactions
+
+## Testing Requirements
+- Unit tests for core functionality
+- Integration tests for critical user flows
+- Frontend component tests
+- Backend API endpoint tests
+
+## Deliverables
+1. Complete source code
+2. README.md with:
+   - Setup instructions
+   - Technology stack used
+   - How to run the application
+   - How to run tests
+3. Brief documentation on architectural decisions
+
+## Evaluation Criteria
+- Functional completeness
+- Code quality and organization
+- User experience
+- Performance
+- Error handling
+- Test coverage
+"""
+
+[tasks.getprompt]
+   run = "echo ${AI_IDE_PROMPT}"

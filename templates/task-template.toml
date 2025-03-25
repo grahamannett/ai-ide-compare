@@ -1,0 +1,7 @@
+# This is the template for new tasks
+[env]
+    AI_IDE_MODEL  = "..."
+    AI_IDE_PROMPT = "..."
+
+[tasks.getprompt]
+    run = "echo ${AI_IDE_PROMPT}"
