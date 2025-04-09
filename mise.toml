@@ -1,7 +1,8 @@
 
 [env]
-    # need insiders for `agent` abilities
-    COPILOT_IDE = "code-insiders"
+    # previously needed insiders for `agent` abilities, its in the latest version now it seems though
+    VSCODE_TYPE = "{{ get_env(name='USEINSIDERS', default='-insiders') }}" # if USEINSIDERS='' then doenst use insiders?
+    VSCODE_CMD = "code{{ env.VSCODE_TYPE }}"
 
 [tasks."version:cursor"]
     run = "cursor --version"
@@ -10,10 +11,12 @@
     run = "windsurf --version"
 
 [tasks."version:copilot"]
-    # versus ~/.vscode
-    env = { COPILOT_DIR = ".vscode-insiders" }
-    run = "jq -r '.version' $(find ~/$COPILOT_DIR/extensions -type d -name 'github.copilot-[0-9]*')/package.json"
-
+    env = { VSCODE_DIR = ".vscode{{env.VSCODE_TYPE}}" }
+    run = [
+        # advantage of using env.VARNAME (versus $VSCODE_DIR) is that it explicity prints the var from mise run
+        "echo VSCODE-FOLDER: {{env.VSCODE_DIR}}",
+        "jq -r '.version' $(find ~/{{env.VSCODE_DIR}}/extensions -type d -name 'github.copilot-[0-9]*')/package.json",
+    ]
 [tasks."ide:cursor"]
     run = "cursor {{arg(name='file')}}"
 
@@ -21,7 +24,7 @@
     run = "windsurf {{arg(name='file')}}"
 
 [tasks."ide:copilot"]
-    run = "windsurf {{arg(name='file')}}"
+    run = "$VSCODE_CMD {{arg(name='file')}}"
 
 [tasks.eval]
-    run = "uv run ai-ide-compare {{arg(name='taskdir')}}"
+    run = "uv run ai-ide-compare {{arg(name='taskdir', var=true)}}"
