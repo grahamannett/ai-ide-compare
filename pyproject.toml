@@ -5,7 +5,7 @@
     readme          = "readme.md"
     authors         = [{ name = "graham", email = "graham.annett@gmail.com" }]
     requires-python = ">=3.12"
-    dependencies    = []
+    dependencies    = ["rich>=13.9.4"]
 
     [project.scripts]
         ai-ide-compare = "ai_ide_compare:main"

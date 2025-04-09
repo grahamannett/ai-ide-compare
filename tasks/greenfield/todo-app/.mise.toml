@@ -1,0 +1,5 @@
+[env]
+    AI_IDE_PROMPT = """NONE"""
+
+[tasks.getprompt]
+    run = 'echo "${AI_IDE_PROMPT}"'

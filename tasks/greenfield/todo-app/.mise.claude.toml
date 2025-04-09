@@ -1,4 +1,5 @@
 [env]
+   AI_IDE_MODEL = "claude"
    AI_IDE_PROMPT = """
 ## Project Overview
 Create a full-stack todo application that allows users to manage their tasks efficiently.
@@ -57,6 +58,3 @@ The application should provide a clean, intuitive interface for creating, updati
 - Error handling
 - Test coverage
 """
-
-[tasks.getprompt]
-   run = "echo ${AI_IDE_PROMPT}"

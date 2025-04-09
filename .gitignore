@@ -12,10 +12,16 @@ wheels/
 # ignore
 tasks/brownfield/*
 
-tasks/greenfield/*
-tasks/greenfield/*/*
-!tasks/greenfield/*/
-!tasks/greenfield/*/.mise.*.toml
+tasks/*/*
+tasks/**/*
+!tasks/**/
+!tasks/**/.mise*.toml
 
 # use .keep for blank dirs but ignore the actual implementation
 !**/.keep
+results/**
+
+# IDEs
+.cursor/
+.windsurfrules
+uv.lock
