@@ -33,9 +33,17 @@ echo -e $AI_IDE_PROMPT
 
 With the new IDE window, follow the instructions from the mise task (which requires pasting the prompt into the chat portion).
 
-Once the IDE chat is done generating the task, the evaluation can be run with `mise run eval tasks/greenfield/todo-app` (which is essentially just `uv run ai-ide-compare tasks/greenfield/todo-app`). This will output the results to the console:
+# Evaluation
 
-```json
+Currently the evaluation looks at lines of code, files and tests if they exist.
+
+Once the IDE chat is done generating the task, the evaluation is done by specifying the task directory:
+
+<!-- can be run with ` -->
+
+```bash
+> mise run eval tasks/greenfield/todo-app # ` can also be run with `uv run ai-ide-compare tasks/greenfield/todo-app`
+# which will output the results to the console:
 {
   "total_files": 1,
   "total_lines": 1,
@@ -53,6 +61,8 @@ Once the IDE chat is done generating the task, the evaluation can be run with `m
 }
 ```
 
-# Evaluation
+# Site
 
-Currently the evaluation looks at lines of code, files and tests if they exist.
+Todo: site will be ??? (maybe reflex?)
+
+- Should have an image of the running app for each task?

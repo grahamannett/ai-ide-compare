@@ -4,13 +4,11 @@ import argparse
 import json
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Generator, Set, Optional, Literal, Any
+from typing import Any, Generator, Optional, Set
 
 from rich.console import Console
-from rich.markdown import Markdown
 from rich.panel import Panel
 from rich.table import Table
-from rich import print as rprint
 
 # Initialize Rich console
 console = Console()
@@ -181,10 +179,8 @@ def print_rich_output(metrics: CodebaseMetrics) -> None:
 
 
 def eval_entrypoint():
-    import sys
-
-    breakpoint()
-
+    """Command-line interface for the analyzer."""
+    parser = argparse.ArgumentParser(description="Codebase Metrics Analyzer")
     """Command-line interface for the analyzer."""
     parser = argparse.ArgumentParser(description="Codebase Metrics Analyzer")
     parser.add_argument("directory", help="Path to codebase directory")

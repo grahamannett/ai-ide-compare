@@ -10,20 +10,11 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Optional
 
-from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 
-
-console = Console()
-
-
-class DIRS:
-    """Default paths for dirs as constants."""
-
-    TASKS: Path = Path("tasks")
-    RESULTS: Path = Path("results")
-    TASK_RESULTS: Path = RESULTS / "tasks"
+from ai_ide_compare import console
+from ai_ide_compare.shared import DIRS
 
 
 @dataclass
@@ -50,18 +41,23 @@ def _get_templates(typ: str) -> dict[str, tuple[str, str]]:
     return {t.name: (str(t), typ) for t in (DIRS.TASKS / typ).iterdir() if t.is_dir()}
 
 
-TASK_TEMPLATES = {
-    **_get_templates("greenfield"),
-    **_get_templates("brownfield"),
-}
-
-
 def save_metadata(metadata: TaskMetadata, output_dir: Path) -> Path:
     """Save metadata to the output directory."""
     metadata_path = output_dir / "metadata.json"
     with open(metadata_path, "w") as f:
         json.dump(asdict(metadata), f, indent=2)
     return metadata_path
+
+
+def detect_task_type(task_name: str) -> str:
+    """Detect task type based on task name."""
+    if (DIRS.TASKS / "greenfield" / task_name).exists():
+        return "greenfield"
+    elif (DIRS.TASKS / "brownfield" / task_name).exists():
+        return "brownfield"
+    else:
+        console.error(f"Task '{task_name}' not found.")
+        sys.exit(1)
 
 
 def copy_task_template(
@@ -80,19 +76,15 @@ def copy_task_template(
     def _template_dir(_type, _name):
         return DIRS.TASKS / _type / _name
 
-    template_dir: Path
-
-    if task_template_dir is None:
-        template_dir = _template_dir(task_type, task_name)
-    elif isinstance(task_template_dir, str):
+    if isinstance(task_template_dir, str):
         template_dir = Path(task_template_dir)
     elif isinstance(task_template_dir, Path):
         template_dir = task_template_dir
+    else:
+        template_dir = _template_dir(task_type, task_name)
 
     if not template_dir.exists():
-        console.print(
-            f"[bold red]Error:[/bold red] Task template not found: {template_dir}"
-        )
+        console.error(f"Task template not found: {template_dir}")
         sys.exit(1)
 
     # Create output directory
@@ -119,20 +111,6 @@ def generate_output_path(metadata: TaskMetadata) -> Path:
     return DIRS.TASK_RESULTS / dir_name
 
 
-def detect_task_type(task_name: str) -> str:
-    """Detect task type based on task name."""
-    # Check if task exists in greenfield or brownfield directories
-    if (DIRS.TASKS / "greenfield" / task_name).exists():
-        return "greenfield"
-    elif (DIRS.TASKS / "brownfield" / task_name).exists():
-        return "brownfield"
-    else:
-        console.print(
-            f"[bold red]Error:[/bold red] Task '{task_name}' not found in either greenfield or brownfield directories."
-        )
-        sys.exit(1)
-
-
 def get_ide_version(ide: str) -> Optional[str]:
     """Get IDE version using mise run version:<ide> command."""
     try:
@@ -157,15 +135,16 @@ def get_ide_version(ide: str) -> Optional[str]:
                 if version_lines:
                     return version_lines[0].strip()
 
-        console.print(
-            f"[yellow]Warning:[/yellow] Could not detect {ide} version automatically."
-        )
+        console.warn(f"Could not detect {ide=} version automatically.")
         return None
     except Exception as e:
-        console.print(
-            f"[yellow]Warning:[/yellow] Error detecting {ide} version: {str(e)}"
-        )
+        console.warn(f"Error detecting {ide=} version: {str(e)}")
         return None
+
+
+def start_ide(ide: str, output_dir: Path):
+    """Start the IDE."""
+    subprocess.run(["mise", "run", f"ide:{ide}", output_dir])
 
 
 def collect_environment_info() -> dict[str, Any]:
@@ -223,11 +202,16 @@ def init_entrypoint():
     parser.add_argument("--tags", nargs="+", help="Tags for categorizing this task run")
     parser.add_argument("--notes", help="Additional notes about this task run")
     parser.add_argument("--output-dir", help="Custom output directory")
-    parser.add_argument("--post-init-cmd", help="Allow IDE after project init")
+    parser.add_argument("--start-ide", help="Start the IDE", action="store_true")
 
     args = parser.parse_args()
 
-    task_type = args.task_type if args.task_type else detect_task_type(args.task_name)
+    task_templates = {
+        **_get_templates("greenfield"),
+        **_get_templates("brownfield"),
+    }
+
+    task_template_dir, task_type = task_templates[args.task_name]
 
     console.print(f"[blue]Detecting {args.ide} version...[/blue]")
     ide_version = get_ide_version(args.ide)
@@ -259,12 +243,14 @@ def init_entrypoint():
     console.print(f"[bold blue]Output dir:[/bold blue] {output_dir}")
 
     # Copy task template
-    task_template_dir, _ = TASK_TEMPLATES[args.task_name]
 
     copy_task_template(output_dir=output_dir, task_template_dir=task_template_dir)
 
     save_metadata(metadata, output_dir)
     print_task_info(metadata, output_dir)
+
+    if args.start_ide:
+        start_ide(args.ide, output_dir)
 
 
 if __name__ == "__main__":
