@@ -1,4 +1,3 @@
-
 [env]
     # previously needed insiders for `agent` abilities, its in the latest version now it seems though
     VSCODE_TYPE = "{{ get_env(name='USEINSIDERS', default='-insiders') }}" # if USEINSIDERS='' then doenst use insiders?
@@ -28,3 +27,13 @@
 
 [tasks.eval]
     run = "uv run ai-ide-compare {{arg(name='taskdir', var=true)}}"
+
+[tasks.taskstart]
+    # TODO: move these to args, but use env.VARNAME as makes it easier to verify as they are printed out from mise
+    env = { TASK_NAME = "todo-app", IDE = "cursor", LLM = "anthropic-claude3.7" }
+    run = """
+    OUTPUT_DIR=$(uv run python -m src.ai_ide_compare.task_init {{env.TASK_NAME}} {{env.IDE}} {{env.LLM}} --capture-output)
+    echo "Created task in directory: $OUTPUT_DIR"
+    # start the ide
+    mise run ide:$IDE "$OUTPUT_DIR"
+    """

@@ -6,6 +6,7 @@ import platform
 import shutil
 import subprocess
 import sys
+import tempfile
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Optional
@@ -203,8 +204,19 @@ def init_entrypoint():
     parser.add_argument("--notes", help="Additional notes about this task run")
     parser.add_argument("--output-dir", help="Custom output directory")
     parser.add_argument("--start-ide", help="Start the IDE", action="store_true")
+    parser.add_argument(
+        "--capture-output",
+        action="store_true",
+        help="Capture output to a file and only print the output directory path to stdout",
+    )
 
     args = parser.parse_args()
+
+    # Setup log capture if requested
+    if args.capture_output:
+        log_file = tempfile.mktemp(suffix=".log", prefix="ai_ide_init_")
+        console.OutputHandler.start_capture(log_file)
+        console.info(f"Capturing output to {log_file}")
 
     task_templates = {
         **_get_templates("greenfield"),
@@ -242,13 +254,14 @@ def init_entrypoint():
     console.print(f"[bold blue]Init task:[/bold blue] {task_type}/{args.task_name}")
     console.print(f"[bold blue]Output dir:[/bold blue] {output_dir}")
 
-    # Copy task template
-
     copy_task_template(output_dir=output_dir, task_template_dir=task_template_dir)
-
     save_metadata(metadata, output_dir)
     print_task_info(metadata, output_dir)
 
+    if args.capture_output:
+        console.stdout(str(output_dir))
+
+    # AVOID THIS, START IDE FROM MISE INSTEAD
     if args.start_ide:
         start_ide(args.ide, output_dir)
 

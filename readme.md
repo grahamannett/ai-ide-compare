@@ -25,13 +25,19 @@ Brownfield tasks are not yet implemented, but they should include tasks that are
 The goal is to have tasks run using MCP (or if there is another approach) but there are currently no MCP servers that allow this functionality to programmatically kick off one of the project and evals (perhaps something like [buga-luga-cursor-mcp](https://opentools.com/registry/buga-luga-cursor-mcp) but I did not really look too far into it).
 Until there is a way to programatically run a task (meaning feed the prompt to the IDE and have it run), running the project task is done manually by opening the directory with the IDE and using the prompt from the `.mise.{MODEL_NAME}.toml` file:
 
-```bash
+<!-- ```bash
 mise run ide:cursor tasks/greenfield/todo-app
 # in the new IDE window, you should be able to see the prompt with the following command:
 echo -e $AI_IDE_PROMPT
+``` -->
+
+```bash
+mise run taskstart
+# this should create the task and open the IDE, then in the new IDE run,
+MISE_ENV=claude mise run getprompt | pbcopy
 ```
 
-With the new IDE window, follow the instructions from the mise task (which requires pasting the prompt into the chat portion).
+At that point, paste the prompt into the IDE and make sure the model is the correct one.
 
 # Evaluation
 
@@ -61,8 +67,14 @@ Once the IDE chat is done generating the task, the evaluation is done by specify
 }
 ```
 
-# Site
+# Roadmap
 
-Todo: site will be ??? (maybe reflex?)
-
-- Should have an image of the running app for each task?
+- [ ] Task runner
+  - If there is a way to programatically run the IDE, that would be ideal.
+  - Does not seem like there is a way to do this, so possibly use some MCP like (have not looked into these much at all):
+    - https://github.com/mediar-ai/screenpipe
+    - https://computer-use.club/
+  - Problem with a lot of these is will have to save login info for each IDE
+- [ ] tasks
+- [ ] site
+  - Initially simple site that allows you to see image of build/site, maybe eventually show running app
